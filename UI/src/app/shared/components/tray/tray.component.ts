@@ -1,5 +1,5 @@
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,7 +34,7 @@ import { SpoolItemComponent } from "../spool/spool.component";
   templateUrl: './tray.component.html',
   styleUrls: ['./tray.component.scss'],
 })
-export class TrayComponent implements OnInit, OnDestroy {
+export class TrayComponent implements OnInit, OnDestroy, OnChanges {
   @Input() tray: Tray | null = null;
   @Input() spools: Spool[] = [];
   @Input() name: string = '';
@@ -51,9 +51,13 @@ export class TrayComponent implements OnInit, OnDestroy {
     private settingsService: SettingsService
   ) {}
 
-  ngOnInit(): void {
-    this.currentSpool = this.getCurrentSpool(this.tray);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['tray'] || changes['spools']) {
+      this.currentSpool = this.getCurrentSpool(this.tray);
+    }
+  }
 
+  ngOnInit(): void {
     // Subscribe to settings changes
     this.settingsService.settings$
       .pipe(takeUntil(this.destroy$))
