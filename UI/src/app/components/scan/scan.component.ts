@@ -87,7 +87,7 @@ export class ScanComponent {
     }).subscribe({
       next: ({ spools, trays }) => {
         this.loading = false;
-        const spool = spools.find(s => s.barcode === barcode);
+        const spool = spools.find(s => s.extra?.['barcode'] === JSON.stringify(barcode));
         if (!spool) {
           this.error = `No spool found for barcode: ${barcode}`;
           return;
